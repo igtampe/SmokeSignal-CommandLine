@@ -1,10 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmokeSignal {
     public class ServerCommand {
@@ -35,14 +31,21 @@ namespace SmokeSignal {
                 BR=new BinaryReader(NS);
                 BW=new BinaryWriter(NS);
 
+                //Send the message
+                BW.Write(Message);
 
-            
+                //Try to read it
+                try { ServerMSG=BR.ReadString(); } catch { throw new Exception("Server cut connection abruptly. Perhaps it crashed?"); }
+
+                //Close the connection
+                TC.Close();
             }
 
-
-
-            return null;
+            //Return the server message
+            return ServerMSG;
         }
+
+        public static string RawCommand(String Message) { return RawCommand(Message,DEFAULT_IP,DEFAULT_PORT); }
 
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BasicRender;
+using SmokeSignal;
 
 namespace SmokeSignal_CommandLine {
     class Program {
@@ -22,30 +19,15 @@ namespace SmokeSignal_CommandLine {
             int Port;
             if(!int.TryParse(IPPortCombo[1],out Port)) { IncorectSyntaxWarning(); return; }
 
-            String Message = args[2];
-            bool Verbose = false;
-            if(args.Length>=3&&args[2].ToUpper()=="/D") { Verbose=true; }
+            //Get the message, including any of those after that may have been separated due to spaces.
+            String Message = args[1];
+            for(int X = 2; X<args.Length; X++) {Message+=" "+args[X];}
 
-
-
-
-
-
-
-            //ok first things first
-            foreach(string arg in args) {Render.Echo(arg,true);}
-            Render.Pause();
-
-
-
-
-
-
+            //Echo the return of the server.
+            try { Render.Echo(ServerCommand.RawCommand(Message,IP,Port)); } catch(Exception E) { Render.Sprite(E.Message,ConsoleColor.Black,ConsoleColor.Red); }
         }
 
         public static void IncorectSyntaxWarning() {Render.Echo("Incorrect Syntax. See SMOKESIGNAL /? for more help.");}
-
-
 
         /// <summary>Draws the help screen</summary>
         public static void HelpScreen() {
@@ -55,11 +37,10 @@ namespace SmokeSignal_CommandLine {
             Render.Echo(".");
             Render.Echo("Sends a message to a SmokeSignal Server and displays a response.",true);
             Render.Echo(".");
-            Render.Echo("SMOKESIGNAL IP:Port Message [/D]",true);
+            Render.Echo("SMOKESIGNAL IP:Port Message",true);
             Render.Echo(".",true);
             Render.Echo("  IP:Port        Specifies the IP/PORT to send the message to",true);
             Render.Echo("  Message        Message to send to the server",true);
-            Render.Echo("  /D             Enables Verbose Mode",true);
             Render.Echo(".");
         }
 
